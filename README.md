@@ -76,6 +76,7 @@ To eliminate false positives and maintain SOC oversight:
 <img width="605" height="321" alt="image" src="https://github.com/user-attachments/assets/b45a85db-2a85-49cd-9681-3d7be85db924" />
 
 The playbook enters a WAITING state. An interactive approval prompt is generated with contextual details: "XSS attack detected! Attacker IP address: 185.220.101.5. Do you allow this IP address to be blocked?" 
+
 <img width="605" height="319" alt="image" src="https://github.com/user-attachments/assets/c867c757-6587-4739-b25c-bf813621aff8" />
 
 The SOC analyst verifies the incident and triggers the approval link (/api/v1/workflows/.../execute), changing the status to SUCCESS and resuming workflow execution.
