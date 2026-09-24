@@ -87,11 +87,13 @@ The SOC analyst verifies the incident and triggers the approval link (/api/v1/wo
 
 Step 7: Automated Response & Containment (Shuffle Tools 2)
 Upon approval, a Python script (pywinrm) executes inside the workflow node:
+
 <img width="605" height="321" alt="image" src="https://github.com/user-attachments/assets/3febf346-4ec0-40ee-bed7-678a3d510e30" />
 
 It establishes a secure WinRM session to the target Windows endpoint and executes a remote PowerShell script to generate a new inbound firewall rule:
 New-NetFirewallRule -DisplayName "Block Attacker IP - 185.220.101.5" -Direction Inbound -Action Block -RemoteAddress 185.220.101.5
 The WinRM service returns a success payload ("success": true), confirming that the malicious IP address has been isolated.
+
 <img width="605" height="341" alt="image" src="https://github.com/user-attachments/assets/1a21169d-ad6c-4fc7-b883-1bad97be8c59" />
 
 4. Verification & Validation
