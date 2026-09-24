@@ -55,6 +55,7 @@ IP Address Extraction (Shuffle Tools 1): A parsing node extracts the attacker’
 Step 5: Whitelist Condition Handling
 To prevent accidental blocking of critical internal infrastructure or trusted networks (like local gateway 172.18.0.1), a conditional branch evaluates whether the extracted IP matches the whitelist:
 <img width="605" height="323" alt="image" src="https://github.com/user-attachments/assets/8987f981-0f06-4b08-a158-5d324c727a9f" />
+
 Condition: $shuffle_tools_1 DOES NOT EQUAL 172.18.0.1
 Result: Whitelisted IP execution paths are halted safely, while external threat addresses proceed to the containment stage.
 <img width="605" height="323" alt="image" src="https://github.com/user-attachments/assets/93da3850-d305-4b0f-98f5-3ea97d462914" />
@@ -69,6 +70,7 @@ The playbook enters a WAITING state. An interactive approval prompt is generated
 
 The SOC analyst verifies the incident and triggers the approval link (/api/v1/workflows/.../execute), changing the status to SUCCESS and resuming workflow execution.
 <img width="605" height="81" alt="image" src="https://github.com/user-attachments/assets/dd66fdc3-57fb-4b8f-aa38-d57f31cc650d" />
+
 
 
 Step 7: Automated Response & Containment (Shuffle Tools 2)
