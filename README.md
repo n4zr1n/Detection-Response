@@ -94,17 +94,23 @@ The WinRM service returns a success payload ("success": true), confirming that t
 <img width="605" height="341" alt="image" src="https://github.com/user-attachments/assets/1a21169d-ad6c-4fc7-b883-1bad97be8c59" />
 
 4. Verification & Validation
+
 The remediation action was verified directly on the target host by executing the following PowerShell command in an elevated prompt:
 Get-NetFirewallRule -DisplayName "Block Attacker IP*" | Select-Object DisplayName, Enabled, Direction, Action
 Output Confirmation:
+
 <img width="605" height="59" alt="image" src="https://github.com/user-attachments/assets/349a9da9-b4be-4e23-8d31-ec33cb94b8c6" />
 
 DisplayName: Block Attacker IP: 185.220.101.5
+
 Enabled: True
+
 Direction: Inbound
+
 Action: Block
 
 5. Conclusion
+
 This use case demonstrates a complete SOC automation lifecycle: 
 Threat Detection -> SIEM Alerting ->  Context Enrichment ->  Analyst Oversight ->  Automated Network Isolation.
 
@@ -114,6 +120,7 @@ Use Case 2: Brute Force Attack Detected with Successful Logon & Automated Mitiga
 Platform: Shuffle SOAR, Python (pywinrm), Active Directory / Windows Server
 
 1. Executive Summary
+
 This security incident report details the investigation and automated response workflow for the use case: "Brute Force Attack Detected & Successful Logon". The automated incident response playbook was implemented within the SOC (Security Operations Center) environment using the Shuffle SOAR platform. 
 Security monitoring systems registered multiple failed authentication attempts followed by a successful logon event on the target account. This triggered an automated containment playbook to isolate the compromised credentials and prevent potential lateral movement within the network.
 
@@ -124,6 +131,7 @@ The incident originated from a SIEM alert payload forwarded to Shuffle SOAR. The
 Step 1: Brute Force Detection in Splunk (SPL Query)
 
 To detect potential brute-force attacks, an SPL (Splunk Processing Language) query is executed in Splunk Enterprise to search for failed logon attempts:
+
 <img width="605" height="183" alt="image" src="https://github.com/user-attachments/assets/393a15af-4b6c-4126-8b15-e4641a177c8e" />
 
 •	EventCode=4625: Filters Windows Security log events corresponding to failed account logons.
