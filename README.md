@@ -60,6 +60,7 @@ IP Address Extraction (Shuffle Tools 1): A parsing node extracts the attacker’
 Step 5: Whitelist Condition Handling
 
 To prevent accidental blocking of critical internal infrastructure or trusted networks (like local gateway 172.18.0.1), a conditional branch evaluates whether the extracted IP matches the whitelist:
+
 <img width="605" height="323" alt="image" src="https://github.com/user-attachments/assets/8987f981-0f06-4b08-a158-5d324c727a9f" />
 
 Condition: $shuffle_tools_1 DOES NOT EQUAL 172.18.0.1
@@ -71,6 +72,7 @@ Result: Whitelisted IP execution paths are halted safely, while external threat 
 Step 6: Human-in-the-Loop Analyst Approval (XSS Block Approval)
 
 To eliminate false positives and maintain SOC oversight:
+
 <img width="605" height="321" alt="image" src="https://github.com/user-attachments/assets/b45a85db-2a85-49cd-9681-3d7be85db924" />
 
 The playbook enters a WAITING state. An interactive approval prompt is generated with contextual details: "XSS attack detected! Attacker IP address: 185.220.101.5. Do you allow this IP address to be blocked?" 
@@ -108,14 +110,19 @@ Threat Detection -> SIEM Alerting ->  Context Enrichment ->  Analyst Oversight -
 
 
 Use Case 2: Brute Force Attack Detected with Successful Logon & Automated Mitigation
+
 Platform: Shuffle SOAR, Python (pywinrm), Active Directory / Windows Server
+
 1. Executive Summary
 This security incident report details the investigation and automated response workflow for the use case: "Brute Force Attack Detected & Successful Logon". The automated incident response playbook was implemented within the SOC (Security Operations Center) environment using the Shuffle SOAR platform. 
 Security monitoring systems registered multiple failed authentication attempts followed by a successful logon event on the target account. This triggered an automated containment playbook to isolate the compromised credentials and prevent potential lateral movement within the network.
 
 2. Incident Analysis & Technical Findings
+
 The incident originated from a SIEM alert payload forwarded to Shuffle SOAR. The incoming payload flagged a dictionary/brute-force attack pattern resulting in account compromise.
+
 Step 1: Brute Force Detection in Splunk (SPL Query)
+
 To detect potential brute-force attacks, an SPL (Splunk Processing Language) query is executed in Splunk Enterprise to search for failed logon attempts:
 <img width="605" height="183" alt="image" src="https://github.com/user-attachments/assets/393a15af-4b6c-4126-8b15-e4641a177c8e" />
 
@@ -125,10 +132,12 @@ To detect potential brute-force attacks, an SPL (Splunk Processing Language) que
 Result: The user naz_testuser registered 84 failed logon events, indicating a ongoing brute-force attempt against this account.
 
 Step 2: Configuring Real-Time Webhook Alert in Splunk
+
 An alert named "Brute-Force Successful Logon Detected" (or Brute-Force Detection Alert) is configured in Splunk:
 <img width="384" height="398" alt="image" src="https://github.com/user-attachments/assets/bfcfabce-2728-4b14-9260-13fdc7f7e9fb" />
 
 Step 3: Simulating the Brute-Force Attack (PowerShell)
+
 A brute-force attack is simulated against the target account naz_testuser using Windows PowerShell:
 
 <img width="565" height="460" alt="image" src="https://github.com/user-attachments/assets/40c0dd1b-f22c-49e6-83f4-9fb79c78b7fd" />
@@ -140,9 +149,11 @@ Step 4: Splunk Event Logs View
 
 This view displays the raw Security Event Logs captured in Splunk:
 <img width="605" height="325" alt="image" src="https://github.com/user-attachments/assets/8b136ed0-ecbf-4ffa-abd4-f6dbc1238634" />
+
 LogName=Security and EventCode=4625 indicate logged failed attempt events. Specific event metadata such as host name (BB16675), timestamps, and sourcetype (WinEventLog:Security) confirm that Windows event logs are actively ingested and analyzed by Splunk.
 
 Step 5: Shuffle Automation Workflow Setup
+
 A automated SOAR workflow titled Brute-Force-Account-Disable is created in Shuffle:
 <img width="605" height="285" alt="image" src="https://github.com/user-attachments/assets/a1cabe42-0dfa-471f-ab34-54cc24fcb446" />
 •	Webhook 1: Receives the alert payload sent by Splunk when the brute-force condition is met.
