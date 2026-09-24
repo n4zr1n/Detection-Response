@@ -20,23 +20,33 @@ This use case demonstrates an end-to-end automated detection and containment wor
 3. Step-by-Step Incident Execution & Workflow
 Step 1: Attack Simulation (DVWA)
 An attacker injects a malicious Reflected XSS payload into the search input field of the DVWA web application running at http://localhost:7575.
+
 <img width="605" height="367" alt="image" src="https://github.com/user-attachments/assets/8330f0e9-835a-45ff-b687-a91640065682" />
+
 
 Step 2: WAF Interception & Detection
 ModSecurity WAF analyzes the HTTP request, identifies the pattern match against the OWASP Core Rule Set (XSS Injection), blocks the malicious execution, and returns an HTTP 403 Forbidden response to the attacker.
+
 <img width="605" height="114" alt="image" src="https://github.com/user-attachments/assets/d3fce80c-d0db-40a8-90ef-b5a6d87639a1" />
+
 
 Step 3: Log Ingestion & Real-Time Alerting (Splunk SIEM)
 ModSecurity generates structured JSON audit logs detailing the transaction and client request parameters. Splunk ingests these logs under sourcetype=_json and identifies the XSS Attack Detected event.
+
 <img width="605" height="342" alt="image" src="https://github.com/user-attachments/assets/f112793a-cb4a-4a02-a8da-c36e375670c2" />
+
 Logs are saved as alerts. A real-time Splunk Alert (ModSecurity XSS Attack Detected) is triggered, configured to execute a Webhook action sending the event payload directly to Shuffle SOAR. 
+
 <img width="448" height="459" alt="image" src="https://github.com/user-attachments/assets/ff24eeb2-e7ba-4826-9430-03f4b3c3562c" />
 
 Step 4: SOAR Workflow Initiation & Data Parsing (Shuffle)
 Shuffle workflow:
+
 <img width="605" height="322" alt="image" src="https://github.com/user-attachments/assets/a662bbee-e0ff-4db6-b0a6-6367f5178872" />
+
 Webhook Trigger: Shuffle receives the HTTP alert payload from Splunk.
 IP Address Extraction (Shuffle Tools 1): A parsing node extracts the attacker’s source IP address from the log JSON structure using the variable field path $exec.result.transaction_remote_address.
+
 <img width="605" height="323" alt="image" src="https://github.com/user-attachments/assets/ded24091-32cf-4e1a-9d5d-673f372c0a94" />
 
 Step 5: Whitelist Condition Handling
