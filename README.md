@@ -1,12 +1,15 @@
 Executive Summary
+
 Modern Security Operations Centers face an overwhelming volume of alerts that often lead to analyst fatigue and delayed incident response. Traditional manual containment strategies often fail to neutralize active threats before significant enterprise compromise occurs. This project demonstrates the design, deployment, and practical validation of an automated Security Orchestration, Automation, and Response ecosystem integrated directly with a central Security Information and Event Management platform, a Web Application Firewall, and remote endpoint management components.
 By unifying Splunk Enterprise, ModSecurity WAF, Shuffle SOAR, and Windows Remote Management into a single cohesive pipeline, this implementation successfully converts passive security monitoring into proactive threat containment. The core outcomes of this integration include real-time ingestion of web application firewall audit logs for immediate detection of OWASP Top 10 attack vectors, interactive human-in-the-loop analyst approvals delivered via Telegram and Discord, and remote PowerShell execution on target endpoints to isolate compromised user accounts, block unauthorized communication ports, and terminate malicious host processes. Ultimately, this architecture drastically reduces the Mean Time to Respond from hours to under thirty seconds for critical security incidents.
 
 Introduction & Technical Stack
+
 The primary objective of this project is to simulate an end-to-end enterprise SOC workflow within a lab environment. The infrastructure relies on lightweight Docker containers hosting the application and firewall layers, a central Splunk instance for correlation and alert generation, a Shuffle SOAR engine for workflow logic, and a target Windows Server host for automated remediation.
 The application layer consists of Damn Vulnerable Web Application running behind an Nginx web server configured with ModSecurity and the OWASP Core Rule Set. As incoming HTTP traffic flows through ModSecurity, malicious request logs are immediately forwarded to Splunk Enterprise for indexing and real-time detection via custom Search Processing Language queries. Upon detecting a threat, Splunk sends a JSON payload via Webhook to Shuffle SOAR. Shuffle parses the alert data, generates interactive notification prompts to analysts through Telegram and Discord, and waits for a single-click confirmation. Once approved by an analyst, Shuffle executes remote PowerShell containment scripts over WinRM directly on the Windows Server endpoint to neutralize the threat.
 
 Use Case 1: Automated XSS Attack Incident Response & Containment
+
 1. Overview & Objective
 This use case demonstrates an end-to-end automated detection and containment workflow for Cross-Site Scripting (XSS) attacks. By integrating Web Application Firewall (WAF) logs, a SIEM platform (Splunk), and a SOAR platform (Shuffle), the system automatically captures malicious traffic, parses the attacker's IP address, requests human analyst authorization, and dynamically blocks the threat on the host firewall via WinRM.
 
@@ -56,13 +59,17 @@ Condition: $shuffle_tools_1 DOES NOT EQUAL 172.18.0.1
 Result: Whitelisted IP execution paths are halted safely, while external threat addresses proceed to the containment stage.
 <img width="605" height="323" alt="image" src="https://github.com/user-attachments/assets/93da3850-d305-4b0f-98f5-3ea97d462914" />
 
+
 Step 6: Human-in-the-Loop Analyst Approval (XSS Block Approval)
 To eliminate false positives and maintain SOC oversight:
 <img width="605" height="321" alt="image" src="https://github.com/user-attachments/assets/b45a85db-2a85-49cd-9681-3d7be85db924" />
+
 The playbook enters a WAITING state. An interactive approval prompt is generated with contextual details: "XSS attack detected! Attacker IP address: 185.220.101.5. Do you allow this IP address to be blocked?" 
 <img width="605" height="319" alt="image" src="https://github.com/user-attachments/assets/c867c757-6587-4739-b25c-bf813621aff8" />
+
 The SOC analyst verifies the incident and triggers the approval link (/api/v1/workflows/.../execute), changing the status to SUCCESS and resuming workflow execution.
 <img width="605" height="81" alt="image" src="https://github.com/user-attachments/assets/dd66fdc3-57fb-4b8f-aa38-d57f31cc650d" />
+
 
 Step 7: Automated Response & Containment (Shuffle Tools 2)
 Upon approval, a Python script (pywinrm) executes inside the workflow node:
