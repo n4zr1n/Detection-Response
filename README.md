@@ -58,6 +58,7 @@ To prevent accidental blocking of critical internal infrastructure or trusted ne
 
 Condition: $shuffle_tools_1 DOES NOT EQUAL 172.18.0.1
 Result: Whitelisted IP execution paths are halted safely, while external threat addresses proceed to the containment stage.
+
 <img width="605" height="323" alt="image" src="https://github.com/user-attachments/assets/93da3850-d305-4b0f-98f5-3ea97d462914" />
 
 
@@ -69,6 +70,7 @@ The playbook enters a WAITING state. An interactive approval prompt is generated
 <img width="605" height="319" alt="image" src="https://github.com/user-attachments/assets/c867c757-6587-4739-b25c-bf813621aff8" />
 
 The SOC analyst verifies the incident and triggers the approval link (/api/v1/workflows/.../execute), changing the status to SUCCESS and resuming workflow execution.
+
 <img width="605" height="81" alt="image" src="https://github.com/user-attachments/assets/dd66fdc3-57fb-4b8f-aa38-d57f31cc650d" />
 
 
@@ -76,6 +78,7 @@ The SOC analyst verifies the incident and triggers the approval link (/api/v1/wo
 Step 7: Automated Response & Containment (Shuffle Tools 2)
 Upon approval, a Python script (pywinrm) executes inside the workflow node:
 <img width="605" height="321" alt="image" src="https://github.com/user-attachments/assets/3febf346-4ec0-40ee-bed7-678a3d510e30" />
+
 It establishes a secure WinRM session to the target Windows endpoint and executes a remote PowerShell script to generate a new inbound firewall rule:
 New-NetFirewallRule -DisplayName "Block Attacker IP - 185.220.101.5" -Direction Inbound -Action Block -RemoteAddress 185.220.101.5
 The WinRM service returns a success payload ("success": true), confirming that the malicious IP address has been isolated.
@@ -86,6 +89,7 @@ The remediation action was verified directly on the target host by executing the
 Get-NetFirewallRule -DisplayName "Block Attacker IP*" | Select-Object DisplayName, Enabled, Direction, Action
 Output Confirmation:
 <img width="605" height="59" alt="image" src="https://github.com/user-attachments/assets/349a9da9-b4be-4e23-8d31-ec33cb94b8c6" />
+
 DisplayName: Block Attacker IP: 185.220.101.5
 Enabled: True
 Direction: Inbound
@@ -94,6 +98,7 @@ Action: Block
 5. Conclusion
 This use case demonstrates a complete SOC automation lifecycle: 
 Threat Detection -> SIEM Alerting ->  Context Enrichment ->  Analyst Oversight ->  Automated Network Isolation.
+
 
 Use Case 2: Brute Force Attack Detected with Successful Logon & Automated Mitigation
 Platform: Shuffle SOAR, Python (pywinrm), Active Directory / Windows Server
@@ -106,6 +111,7 @@ The incident originated from a SIEM alert payload forwarded to Shuffle SOAR. The
 Step 1: Brute Force Detection in Splunk (SPL Query)
 To detect potential brute-force attacks, an SPL (Splunk Processing Language) query is executed in Splunk Enterprise to search for failed logon attempts:
 <img width="605" height="183" alt="image" src="https://github.com/user-attachments/assets/393a15af-4b6c-4126-8b15-e4641a177c8e" />
+
 •	EventCode=4625: Filters Windows Security log events corresponding to failed account logons.
 •	mvexpand & search: Expands multi-value fields and filters out empty values (-).
 •	stats count by ...: Calculates the total number of failed login attempts grouped by user account.
@@ -117,11 +123,14 @@ An alert named "Brute-Force Successful Logon Detected" (or Brute-Force Detection
 
 Step 3: Simulating the Brute-Force Attack (PowerShell)
 A brute-force attack is simulated against the target account naz_testuser using Windows PowerShell:
+
 <img width="565" height="460" alt="image" src="https://github.com/user-attachments/assets/40c0dd1b-f22c-49e6-83f4-9fb79c78b7fd" />
+
 Multiple net use commands are executed using incorrect passwords, resulting in Windows Error 1326 (Kullanıcı adı veya parola hatalı / Incorrect username or password).
 Finally, the correct password credentials are entered, yielding the message "Komut başarıyla tamamlandı." (The command completed successfully), indicating a successful authentication after multiple failed attempts.
 
 Step 4: Splunk Event Logs View
+
 This view displays the raw Security Event Logs captured in Splunk:
 <img width="605" height="325" alt="image" src="https://github.com/user-attachments/assets/8b136ed0-ecbf-4ffa-abd4-f6dbc1238634" />
 LogName=Security and EventCode=4625 indicate logged failed attempt events. Specific event metadata such as host name (BB16675), timestamps, and sourcetype (WinEventLog:Security) confirm that Windows event logs are actively ingested and analyzed by Splunk.
